@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import heroImage from "../assets/hero.png";
 import AuthModal from './AuthModal.jsx';
@@ -35,7 +34,7 @@ export default function Hero() {
         <img src={heroImage} alt="Advocacy illustration" className="max-w-full h-auto" />
       </div>
 
-      {/* Modal */}
+      {/* ✅ Modal with LoginForm inside */}
       {showModal && (
         <AuthModal
           onClose={() => setShowModal(false)}
@@ -47,8 +46,3 @@ export default function Hero() {
     </section>
   );
 }
-
-
-
-
-

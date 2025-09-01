@@ -50,11 +50,13 @@ export default function AuthModal({
             {/* Forms */}
             {activeTab === 'login' ? (
               <LoginForm
+                 mode="inline"
                 onForgotPassword={onShowForgotPassword}
                 onSwitchToRegister={() => setActiveTab('register')}
               />
             ) : (
-              <RegisterForm />
+              <RegisterForm/>
+
             )}
           </>
         ) : (
