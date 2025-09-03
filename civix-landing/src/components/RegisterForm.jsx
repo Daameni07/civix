@@ -1,66 +1,46 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import api from "../lib/api"; // <-- axios instance
 
 export default function RegisterForm() {
   const navigate = useNavigate();
 
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirm, setConfirm] = useState('');
-  const [role, setRole] = useState('citizen');
-  const [location, setLocation] = useState({ latitude: null, longitude: null });
-
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setLocation({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          });
-        },
-        (error) => {
-          console.error("Geolocation error:", error);
-          toast.warn("⚠️ Unable to fetch location.");
-        }
-      );
-    } else {
-      toast.error("❌ Geolocation not supported by your browser.");
-    }
-  }, []);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [location, setLocation] = useState("");
+  const [role, setRole] = useState("citizen");
 
   const handleRegister = async (e) => {
     e.preventDefault();
 
-    if (!name || !email || !password || password !== confirm) {
+    if (!name || !email || !password || !location) {
       toast.error("⚠️ Please fill all fields correctly.");
       return;
     }
 
-    if (role === 'official' && !email.endsWith('.gov.in')) {
+    if (role === "official" && !email.endsWith(".gov.in")) {
       toast.error("⚠️ Public officials must use a government email.");
       return;
     }
 
     try {
-      console.log("Registering user:", { name, email, role, location });
+      const { data } = await api.post("/auth/register", {
+        name,
+        email,
+        password,
+        role,
+        location, // now a simple string
+      });
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      toast.success("🎉 Registered successfully! Please log in.");
 
-      localStorage.setItem("userRole", role);
-
-      // 🎉 Show success message with login prompt
-      toast.success("🎉 Successfully registered! Please sign in to get started.");
-
-      // ⏳ Delay navigation to allow toast to display
       setTimeout(() => {
         navigate("/login");
-      }, 2000);
+      }, 1500);
     } catch (err) {
-      toast.error("❌ Registration failed.");
+      toast.error(err.response?.data?.message || "❌ Registration failed.");
       console.error(err);
     }
   };
@@ -91,11 +71,11 @@ export default function RegisterForm() {
         onChange={(e) => setPassword(e.target.value)}
       />
       <input
-        type="password"
-        placeholder="Confirm Password"
+        type="text"
+        placeholder="Location (e.g. Guntur, AP)"
         className="input"
-        value={confirm}
-        onChange={(e) => setConfirm(e.target.value)}
+        value={location}
+        onChange={(e) => setLocation(e.target.value)}
       />
 
       <div className="flex space-x-4">
@@ -104,18 +84,20 @@ export default function RegisterForm() {
             type="radio"
             name="role"
             value="citizen"
-            checked={role === 'citizen'}
-            onChange={() => setRole('citizen')}
-          /> Citizen
+            checked={role === "citizen"}
+            onChange={() => setRole("citizen")}
+          />{" "}
+          Citizen
         </label>
         <label>
           <input
             type="radio"
             name="role"
             value="official"
-            checked={role === 'official'}
-            onChange={() => setRole('official')}
-          /> Public Official
+            checked={role === "official"}
+            onChange={() => setRole("official")}
+          />{" "}
+          Public Official
         </label>
       </div>
 
@@ -125,4 +107,3 @@ export default function RegisterForm() {
     </form>
   );
 }
-

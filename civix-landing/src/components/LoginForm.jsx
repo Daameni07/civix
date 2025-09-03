@@ -1,29 +1,38 @@
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import api from "../lib/api";
 
 export default function LoginForm({ onForgotPassword, onSwitchToRegister, mode = "full" }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    if (email && password) {
-      const isOfficial = email.trim().toLowerCase().endsWith('gov.in');
-      const role = isOfficial ? 'official' : 'citizen';
+  const handleLogin = async (e) => {
+     e.preventDefault();
+  try {
+    const res = await api.post("/auth/login", { email, password });
+    
+    const { token, user } = res.data;
 
-      localStorage.setItem('userRole', role);
-      localStorage.setItem('authToken', 'dummy-token');
-      toast.success(`✅ Logged in as ${role.charAt(0).toUpperCase() + role.slice(1)}!`);
-
-      setTimeout(() => {
-        navigate(role === 'official' ? '/dashboard/official' : '/dashboard/citizen');
-      }, 1500);
+    localStorage.setItem("authToken", token);
+    localStorage.setItem("userRole", user.role); // ✅ role is inside user object
+    localStorage.setItem("name", user.name);
+    toast.success("Login successful! 🎉");
+    if (user.role === "official") {
+      navigate("/dashboard/official");
     } else {
-      toast.error('⚠️ Please enter both email and password.');
+      navigate("/dashboard/citizen");
     }
-  };
+
+    console.log("Login success:", res.data);
+  } catch (err) {
+    console.error("Login error:", err.response?.data || err.message);
+    toast.error(err.response?.data?.message || "Login failed");
+  }
+};
+
+
 
   const formContent = (
     <form className="space-y-4" onSubmit={handleLogin}>

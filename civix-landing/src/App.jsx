@@ -8,13 +8,15 @@ import RegisterForm from "./components/RegisterForm.jsx";
 import OfficialDashboard from "./components/OfficialDashboard.jsx";
 import CitizenDashboard from "./components/CitizenDashboard.jsx";
 import CreatePetition from "./components/CreatePetition.jsx";
+import OtpForm from "./components/OtpForm.jsx";
+import SetNewPassword from "./components/SetNewPassword.jsx";
 import { ToastContainer } from "react-toastify";
 import Footer from "./components/Footer.jsx";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function App() {
   const navigate = useNavigate();
-  const location = useLocation(); // 👈 Get current route
+  const location = useLocation();
 
   useEffect(() => {
     const role = localStorage.getItem("userRole");
@@ -34,7 +36,6 @@ export default function App() {
 
   return (
     <div className="flex flex-col min-h-screen bg-brand-light font-sans">
-      {/* Main Content */}
       <div className="flex-grow">
         <div className="max-w-screen-xl mx-auto">
           <Navbar />
@@ -43,16 +44,19 @@ export default function App() {
             <Route path="/" element={<Hero />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route
-  path="/login"
-  element={
-    <LoginForm
-      onForgotPassword={() => navigate("/forgot-password")}
-      onSwitchToRegister={() => navigate("/register")}
-    />
-  }
-/>
-
+              path="/login"
+              element={
+                <LoginForm
+                  onForgotPassword={() => navigate("/forgot-password")}
+                  onSwitchToRegister={() => navigate("/register")}
+                />
+              }
+            />
             <Route path="/register" element={<RegisterForm />} />
+
+            {/* OTP + New Password Routes */}
+            <Route path="/set-new-password" element={<SetNewPassword />} />
+
 
             {/* Protected Dashboard Routes */}
             <Route
@@ -73,7 +77,6 @@ export default function App() {
         </div>
       </div>
 
-      {/* Conditionally render Footer */}
       {location.pathname !== "/" && <Footer />}
     </div>
   );
