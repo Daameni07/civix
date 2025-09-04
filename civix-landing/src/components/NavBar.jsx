@@ -13,7 +13,7 @@ const Navbar = () => {
         <Link to="/petitions" className="hover:text-blue-700 hover:underline transition duration-300">Petitions</Link>
         <Link to="/polls" className="hover:text-blue-700 hover:underline transition duration-300">Polls</Link>
         <Link to="/officials" className="hover:text-blue-700 hover:underline transition duration-300">Settings</Link>
-  
+    
       </div>
     </nav>
   );

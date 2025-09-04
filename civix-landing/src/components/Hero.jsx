@@ -29,6 +29,7 @@ export default function Hero() {
         </div>
       </div>
 
+
       {/* Right */}
       <div className="md:w-1/2 flex justify-center">
         <img src={heroImage} alt="Advocacy illustration" className="max-w-full h-auto" />
